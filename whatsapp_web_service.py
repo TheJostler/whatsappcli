@@ -118,8 +118,6 @@ def getdriver(config: configparser.ConfigParser, headless=True):
     driver.get(f"{whatsapp_url}")
     logf("🔗 Opening WhatsApp Web...")
 
-    try_login()
-
     return driver
 
 def scan_qr():
@@ -266,6 +264,7 @@ def start():
     config = configure()
     logfile = open(config.get("Settings", "log_path"), 'w')
     driver = getdriver(config=config, headless=True)  # Start Selenium
+    try_login()
     if driver is not None:
         host = config.get("Settings", "host", fallback="localhost")
         port = config.get('Settings', 'port', fallback=5000)
