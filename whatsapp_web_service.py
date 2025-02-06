@@ -58,8 +58,39 @@ def generate_qr_code(image_path):
     qr.make()
     qr.print_ascii()  # Generates ASCII version of QR code
 
-def getdriver(config: configparser.ConfigParser, headless=True):
+def try_login():
     global authenticated
+    try:
+        search_box = WebDriverWait(driver, 8).until(
+            EC.presence_of_element_located((By.XPATH, "//div[@contenteditable='true']"))
+        )
+        logf("✅ Logged in!")
+        authenticated = True
+        return
+    except:
+        print("Trying to find QR...")
+        try:
+            qr_canvas = WebDriverWait(driver, 10).until(
+                EC.presence_of_element_located((By.TAG_NAME, "canvas"))
+            )
+            logf("❌ Not Logged in! QR code detected.")
+            qr_canvas.screenshot(f"{configdir}/qr_code.png")
+            logf(f"📸 QR code screenshot saved to {configdir}/qr_code.png")
+
+            """Generates an ASCII QR code from text."""
+            try:
+                print(generate_qr_code(f"{configdir}/qr_code.png"))
+                input("Please press enter once you have linked your device")
+                return try_login()
+
+            except Exception as e:
+                print(e)
+        except:
+            logf("❌ Not Logged in! QR code not detected.")
+            exit(1)
+
+
+def getdriver(config: configparser.ConfigParser, headless=True):
     # Extract configuration values
     chrome_user_data_dir = config.get('Settings', 'chrome_user_data_dir', fallback=f"{configdir}/chrome-data")
 
@@ -86,31 +117,7 @@ def getdriver(config: configparser.ConfigParser, headless=True):
     driver.get(f"{whatsapp_url}")
     logf("🔗 Opening WhatsApp Web...")
 
-    try:
-        search_box = WebDriverWait(driver, 8).until(
-            EC.presence_of_element_located((By.XPATH, "//div[@contenteditable='true']"))
-        )
-        logf("✅ Logged in!")
-        authenticated = True
-    except:
-        print("Trying to find QR...")
-        try:
-            qr_canvas = WebDriverWait(driver, 10).until(
-                EC.presence_of_element_located((By.TAG_NAME, "canvas"))
-            )
-            logf("❌ Not Logged in! QR code detected.")
-            qr_canvas.screenshot(f"{configdir}/qr_code.png")
-            logf(f"📸 QR code screenshot saved to {configdir}/qr_code.png")
-
-            """Generates an ASCII QR code from text."""
-            try:
-                print(generate_qr_code(f"{configdir}/qr_code.png"))
-
-            except Exception as e:
-                print(e)
-        except:
-            logf("❌ Not Logged in! QR code not detected.")
-            exit(1)
+    try_login()
 
     return driver
 

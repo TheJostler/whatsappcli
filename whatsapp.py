@@ -91,7 +91,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     config = configure()
-    API_URL = f"http://localhost:{config.get('Settings', 'port')}/"
+    API_URL = f"http://{config.get('Settings', 'host')}:{config.get('Settings', 'port')}/"
 
     try:
         requests.get(f"{API_URL}/version")
