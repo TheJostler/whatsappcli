@@ -60,6 +60,7 @@ def generate_qr_code(image_path):
 
 def try_login():
     global authenticated
+    global driver
     try:
         search_box = WebDriverWait(driver, 8).until(
             EC.presence_of_element_located((By.XPATH, "//div[@contenteditable='true']"))
@@ -264,7 +265,7 @@ def start():
     global logfile
     config = configure()
     logfile = open(config.get("Settings", "log_path"), 'w')
-    driver = getdriver(config=config, headless=False)  # Start Selenium
+    driver = getdriver(config=config, headless=True)  # Start Selenium
     if driver is not None:
         host = config.get("Settings", "host", fallback="localhost")
         port = config.get('Settings', 'port', fallback=5000)
