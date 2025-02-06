@@ -3,6 +3,7 @@ This tool allows you to automate the process of sending and recieving WhatsApp m
 
 ## Install
 
+Unix like systems
 ```
 git clone https://github.com/thejostler/whatsappcli
 cd whatsappcli
@@ -11,6 +12,14 @@ source .env/bin/activate
 pip install -r requirements.txt
 ```
 
+Windows
+```
+git clone https://github.com/thejostler/whatsappcli
+cd whatsappcli
+python -m venv .env
+source .\.env\bin\activate
+pip install -r requirements.txt
+```
 ## Usage
 There are two modes for this tool, client and server.
 the whatsapp_web_service.py script starts a headless instance of the Chrome browser and a flask API.
