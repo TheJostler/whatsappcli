@@ -86,7 +86,7 @@ def getdriver(config: configparser.ConfigParser, headless=True):
     logf("🔗 Opening WhatsApp Web...")
 
     try:
-        search_box = WebDriverWait(driver, 3).until(
+        search_box = WebDriverWait(driver, 8).until(
             EC.presence_of_element_located((By.XPATH, "//div[@contenteditable='true']"))
         )
         logf("✅ Logged in!")
@@ -257,8 +257,9 @@ def start():
     logfile = open(config.get("Settings", "log_path"), 'w')
     driver = getdriver(config=config, headless=True)  # Start Selenium
     if driver is not None:
-        host = "127"
-        app.run(port=config.get('Settings', 'port', fallback=5000))
+        host = config.get("Settings", "host", fallback="localhost")
+        port = config.get('Settings', 'port', fallback=5000)
+        app.run(host=host, port=port)
     else:
         logf("Failed to initialize WebDriver")
     logfile.close()
