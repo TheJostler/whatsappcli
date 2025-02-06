@@ -195,7 +195,7 @@ def get_last_unread_messages():
     
     # Find the unread messages
     unread_messages = driver.find_elements(By.XPATH, "//span[contains(@aria-label, 'unread message')]")
-    n_chats = len(unread_messages)-1
+    n_chats = 0
     logf(f"✅ Found {n_chats} Chat's with unread messages")
 
     chats =[]
@@ -203,6 +203,7 @@ def get_last_unread_messages():
         parent_element = badge.find_element(By.XPATH, "ancestor::div[5]")
         chat_title = parent_element.find_element(By.XPATH, ".//span")
         if (len(chat_title.text) > 1):
+            n_chats = n_chats+1
             logf(f"🔔 {i}.\t{badge.text} messages from ({chat_title.text})")
             chats.append({"message_count": badge.text, "chat_title": chat_title.text})
     return jsonify({"status": "success", "chats found": n_chats, "chats": chats})
