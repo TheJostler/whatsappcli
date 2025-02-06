@@ -37,6 +37,7 @@ def configure() -> configparser.ConfigParser:
         default_config = f"""[Settings]
                             chrome_user_data_dir={configdir}/chrome-data
                             whatsapp_url=https://web.whatsapp.com
+                            host=127.0.0.1
                             port=5000
                             log_path={configdir}/whatsapp_web_service.log"""
         # Create configuration file
@@ -109,6 +110,7 @@ def getdriver(config: configparser.ConfigParser, headless=True):
                 print(e)
         except:
             logf("❌ Not Logged in! QR code not detected.")
+            exit(1)
 
     return driver
 
@@ -255,7 +257,7 @@ def start():
     global logfile
     config = configure()
     logfile = open(config.get("Settings", "log_path"), 'w')
-    driver = getdriver(config=config, headless=True)  # Start Selenium
+    driver = getdriver(config=config, headless=False)  # Start Selenium
     if driver is not None:
         host = config.get("Settings", "host", fallback="localhost")
         port = config.get('Settings', 'port', fallback=5000)

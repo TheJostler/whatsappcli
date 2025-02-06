@@ -16,6 +16,7 @@ def configure() -> configparser.ConfigParser:
         default_config = f"""[Settings]
                             chrome_user_data_dir={configdir}/chrome-data
                             whatsapp_url=https://web.whatsapp.com
+                            host=127.0.0.1
                             port=5000
                             log_path={configdir}/whatsapp_web_service.log"""
         # Create configuration file
