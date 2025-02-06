@@ -20,18 +20,16 @@ logfile = None
 authenticated = False
 
 def logf(string):
-    global logfile
-    if logfile is None:
-        print("This computer isn't like mine")
     log = f"{time.strftime('%Y-%m-%d %H:%M:%S')} - {string}"
     print(log)
-    logfile.write(log + '\n')
+    if logfile is not None:
+        logfile.write(log + '\n')
 
 def configure() -> configparser.ConfigParser:
     #Create directory to store user data
-    if(not os.path.exists(f"{configdir}")):
-        logf("Creating directory /var/local/whatsapp_automation")
-        os.makedirs(os.path.expanduser('~/.whatsapp_automation'))
+    if(not os.path.exists(configdir)):
+        print(f"Creating directory {configdir}")
+        os.makedirs(configdir)
 
     config = configparser.ConfigParser()
 
