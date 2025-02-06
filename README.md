@@ -12,7 +12,7 @@ source .env/bin/activate
 pip install -r requirements.txt
 ```
 
-Windows
+Windows (powershell)
 ```
 git clone https://github.com/thejostler/whatsappcli
 cd whatsappcli
