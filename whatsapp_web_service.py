@@ -22,8 +22,7 @@ authenticated = False
 def logf(string):
     global logfile
     if logfile is None:
-        config = configure()
-        logfile = open(config.get("Settings", "logpath"), 'w')
+        print("This computer isn't like mine")
     log = f"{time.strftime('%Y-%m-%d %H:%M:%S')} - {string}"
     print(log)
     logfile.write(log + '\n')
