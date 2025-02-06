@@ -5,7 +5,10 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from flask import Flask, request, jsonify
-import time, configparser, os, argparse
+from pyzbar.pyzbar import decode
+from PIL import Image
+import time, configparser, os, qrcode
+
 
 configdir = os.path.expanduser('~/.whatsapp_automation')
 version = "whatsapp_web_service 0.1 -- 2025 By Josjuar Lister"
@@ -14,6 +17,7 @@ driver: webdriver.Chrome = None
 app = Flask(__name__)
 logpath = ""
 logfile = None
+authenticated = False
 
 def logf(string):
     log = f"{time.strftime('%Y-%m-%d %H:%M:%S')} - {string}"
@@ -43,7 +47,17 @@ def configure() -> configparser.ConfigParser:
         config.read(f"{configdir}/config.cfg")
     return config
 
+def generate_qr_code(image_path):
+    img = Image.open(image_path)
+    qr_code = decode(img)[0]
+    data = qr_code.data.decode("utf-8")
+    qr = qrcode.QRCode()
+    qr.add_data(data)
+    qr.make()
+    qr.print_ascii()  # Generates ASCII version of QR code
+
 def getdriver(config: configparser.ConfigParser, headless=True):
+    global authenticated
     # Extract configuration values
     chrome_user_data_dir = config.get('Settings', 'chrome_user_data_dir', fallback=f"{configdir}/chrome-data")
 
@@ -71,15 +85,36 @@ def getdriver(config: configparser.ConfigParser, headless=True):
     logf("🔗 Opening WhatsApp Web...")
 
     try:
-        search_box = WebDriverWait(driver, 30).until(
+        search_box = WebDriverWait(driver, 3).until(
             EC.presence_of_element_located((By.XPATH, "//div[@contenteditable='true']"))
         )
         logf("✅ Logged in!")
+        authenticated = True
     except:
-        logf("❌ Login failed! Search box not found.")
-        return jsonify({"status": "failure", "error": "Failed to load chat window"}), 500
+        print("Trying to find QR...")
+        try:
+            qr_canvas = WebDriverWait(driver, 10).until(
+                EC.presence_of_element_located((By.TAG_NAME, "canvas"))
+            )
+            logf("❌ Not Logged in! QR code detected.")
+            qr_canvas.screenshot(f"{configdir}/qr_code.png")
+            logf(f"📸 QR code screenshot saved to {configdir}/qr_code.png")
+
+            """Generates an ASCII QR code from text."""
+            try:
+                print(generate_qr_code(f"{configdir}/qr_code.png"))
+
+            except Exception as e:
+                print(e)
+        except:
+            logf("❌ Not Logged in! QR code not detected.")
 
     return driver
+
+def scan_qr():
+    return jsonify({"status": "Not Authenticated", 
+                    "Action": "Please scan the QR code from your Whatsapp app",
+                    "qr_path": f"{configdir}/qr_code.png"}), 403
 
 def get_chat(chat_name):
     if not chat_name:
@@ -114,6 +149,8 @@ def clear_search():
 
 @app.route('/send', methods=['GET'])
 def send():
+    if not authenticated:
+        return scan_qr()
     global driver 
     chat_name = request.args.get("chat_name")
     message = request.args.get("message")
@@ -140,6 +177,8 @@ def send():
 
 @app.route('/last', methods=['GET'])
 def get_last_unread_messages():
+    if not authenticated:
+        return scan_qr()
     global driver
     
     if driver is None:
@@ -161,6 +200,8 @@ def get_last_unread_messages():
 
 @app.route('/read', methods=['GET'])
 def read_chat():
+    if not authenticated:
+        return scan_qr()
     chat_name = request.args.get("chat_name")
     n_read = int(request.args.get("n_read", 1))
     if not chat_name or not n_read:
@@ -197,7 +238,16 @@ def read_chat():
 
 @app.route("/version", methods=['GET'])
 def show_version():
+    if not authenticated:
+        return scan_qr()
     return jsonify({"version": version})
+
+@app.route("/")
+def index():
+    return jsonify({
+        "status": "online",
+        "endpoints": app.show_all_endpoints()
+    })
 
 def start():
     global driver 
@@ -206,6 +256,7 @@ def start():
     logfile = open(config.get("Settings", "log_path"), 'w')
     driver = getdriver(config=config, headless=True)  # Start Selenium
     if driver is not None:
+        host = "127"
         app.run(port=config.get('Settings', 'port', fallback=5000))
     else:
         logf("Failed to initialize WebDriver")
