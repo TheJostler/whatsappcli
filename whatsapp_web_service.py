@@ -20,6 +20,7 @@ logfile = None
 authenticated = False
 
 def logf(string):
+    global logfile
     log = f"{time.strftime('%Y-%m-%d %H:%M:%S')} - {string}"
     print(log)
     logfile.write(log + '\n')
