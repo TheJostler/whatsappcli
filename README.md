@@ -1,6 +1,4 @@
 # whatsappcli
-whatsappcli 
-
 This tool allows you to automate the process of sending and recieving WhatsApp messages. It's scriptable and headless. It could have many applications including: AI powered Chat Bots, automatic message responses, scheduled messgaes, helpdesk ticketing systems, or even WhatsApp relay for local LoRa mesh radio networks, just to name a few.
 
 ## Install
@@ -15,11 +13,13 @@ pip install -r requirements.txt
 
 ## Usage
 There are two modes for this tool, client and server.
-the whatsapp_web_service.py script starts an instance of the Chrome browser and a flask API.
+the whatsapp_web_service.py script starts a headless instance of the Chrome browser and a flask API.
 
 You must run this program either on localhost or on a network attached machine.
 
-Once your web_service is running, you can run whatsapp.py in order to utilize the API.
+The first time you start the service it will try to log you into Whatsapp. A QR code should be displayed in the terminal. Scan this QR from your WhatsApp app to link this headless chrome browser as a device. (The QR code shows as ASCII in order to allow you to log in even over a serial connection or ssh connection)
+
+Once your web_service is running and logged in, you can run whatsapp.py in order to utilize the API.
 
 The first time you run either script, it will automatically generate the `.whatsapp_automation` directory at your User's home directory.
 
