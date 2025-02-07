@@ -17,7 +17,7 @@ driver: webdriver.Chrome = None
 ## Provide the path to your chrome
 ## driver if you are having [unable to locate chromedriver] errors
 
-chromdriverpath = None
+chromedriverpath = None
 app = Flask(__name__)
 logpath = ""
 logfile = None
@@ -114,9 +114,9 @@ def getdriver(config: configparser.ConfigParser, headless=True):
             "--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) "
             "Chrome/121.0.0.0 Safari/537.36"
         )
-    
-    if chromdriverpath is not None:
-        service = webdriver.ChromeService(executable_path=chromdriverpath)
+
+    if chromedriverpath is not None:
+        service = webdriver.ChromeService(executable_path=chromedriverpath)
         driver = webdriver.Chrome(options=options, service=service)
     else:
         driver = webdriver.Chrome(options=options)
