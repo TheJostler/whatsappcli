@@ -14,6 +14,10 @@ configdir = os.path.expanduser('~/.whatsapp_automation')
 version = "whatsapp_web_service 0.1 -- 2025 By Josjuar Lister"
 
 driver: webdriver.Chrome = None
+## Provide the path to your chrome
+## driver if you are having [unable to locate chromedriver] errors
+
+chromdriverpath = None
 app = Flask(__name__)
 logpath = ""
 logfile = None
@@ -62,7 +66,7 @@ def try_login():
     global authenticated
     global driver
     try:
-        search_box = WebDriverWait(driver, 8).until(
+        search_box = WebDriverWait(driver, 16).until(
             EC.presence_of_element_located((By.XPATH, "//div[@contenteditable='true']"))
         )
         logf("✅ Logged in!")
@@ -111,7 +115,11 @@ def getdriver(config: configparser.ConfigParser, headless=True):
             "Chrome/121.0.0.0 Safari/537.36"
         )
     
-    driver = webdriver.Chrome(options=options)
+    if chromdriverpath is not None:
+        service = webdriver.ChromeService(executable_path=chromdriverpath)
+        driver = webdriver.Chrome(options=options, service=service)
+    else:
+        driver = webdriver.Chrome(options=options)
     whatsapp_url = config.get('Settings', 'whatsapp_url', fallback='https://web.whatsapp.com/')
 
     # Open WhatsApp Web
@@ -167,7 +175,7 @@ def send():
         return jsonify({"status": "failure", "error": "Missing chat_name or message"}), 400
     
     get_chat(chat_name)
-    message_lines = message.split("\n")
+    message_lines = message.split("¬")
 
     # Find the message box
     logf(f"✅ Found {chat_name}")
