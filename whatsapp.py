@@ -99,6 +99,7 @@ if __name__ == "__main__":
         run(args)
     except:
         print("Please start the web service API")
+        exit(1)
 
 
     # If no arguments are passed
