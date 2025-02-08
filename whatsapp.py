@@ -103,7 +103,6 @@ if __name__ == "__main__":
     except KeyboardInterrupt:
         print("\nOperation cancelled by user.")
     except requests.exceptions.RequestException as e:
-        print(f"API error: {e}")
         print(f"Can't connect to the API at {config.get('Settings', 'host')}:{config.get('Settings', 'port')}")
         print("Please start the web service API")
     except Exception as e:
