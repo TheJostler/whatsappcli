@@ -98,6 +98,7 @@ if __name__ == "__main__":
         requests.get(f"{API_URL}/version")
         run(args)
     except:
+        print(f"Can't connect to the API at {config.get("Settings", "host")}")
         print("Please start the web service API")
         exit(1)
 
