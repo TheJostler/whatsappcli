@@ -97,17 +97,20 @@ if __name__ == "__main__":
     try:
         requests.get(f"{API_URL}/version")
         run(args)    # If no arguments are passed
-        to = input("Enter the contact name: ")
-        message = input("Enter your message: ")
-        send_message(to, message)
+
     except KeyboardInterrupt:
         print("\nOperation cancelled by user.")
+        exit(1)
     except requests.exceptions.RequestException as e:
-        print(f"Can't connect to the API at {config.get('Settings', 'host')}:{config.get('Settings', 'port')}")
-        print("Please start the web service API")
+        print(f"Can't connect to the Whatsappcli Web api at {config.get('Settings', 'host')}:{config.get('Settings', 'port')}")
+        exit(1)
     except Exception as e:
         print(f"Error {e}")
-
+        exit(1)
+    
+    to = input("Enter the contact name: ")
+    message = input("Enter your message: ")
+    send_message(to, message)
 
 
 
