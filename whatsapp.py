@@ -66,12 +66,12 @@ def run(args):
     if args.read:
         chat_name = input("Which chat do you want to read? -- ") if args.read is True else args.read
         read_chat(chat_name, args.number)
-        return
+        return True
    
     # See unread messages
     if args.last:
         get_latest_unread_messages()
-        return
+        return True
     
     if args.send:
         if args.to is None:
@@ -79,7 +79,7 @@ def run(args):
         else:
             to = args.to
         send_message(to, args.send)
-        return
+        return True
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="A CLI client for WhatsApp Web automation")
@@ -96,8 +96,13 @@ if __name__ == "__main__":
 
     try:
         requests.get(f"{API_URL}/version")
-        run(args)    # If no arguments are passed
-
+        if run(args):    # If no arguments are passed
+            exit(0)
+        
+        print("Send a message:")
+        to = input("Enter the contact name: ")
+        message = input("Enter your message: ")
+        send_message(to, message)
     except KeyboardInterrupt:
         print("\nOperation cancelled by user.")
         exit(1)
@@ -107,10 +112,6 @@ if __name__ == "__main__":
     except Exception as e:
         print(f"Error {e}")
         exit(1)
-    
-    to = input("Enter the contact name: ")
-    message = input("Enter your message: ")
-    send_message(to, message)
 
 
 
