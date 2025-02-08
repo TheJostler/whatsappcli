@@ -35,6 +35,7 @@ def api_call(endpoint, params):
         r = requests.get(f"{API_URL}/{endpoint}", params=params)
     except Exception as e:
         print(f"An error occoured: {e}")
+        return None
     response = r.json()
     if(response["status"] != "success"):
         print("The WhatsApp Web service experienced a problem")
@@ -95,10 +96,10 @@ if __name__ == "__main__":
 
     try:
         requests.get(f"{API_URL}/version")
+        run(args)
     except:
         print("Please start the web service API")
 
-    run(args)
 
     # If no arguments are passed
     to = input("Enter the contact name: ")
