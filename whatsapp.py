@@ -66,12 +66,12 @@ def run(args):
     if args.read:
         chat_name = input("Which chat do you want to read? -- ") if args.read is True else args.read
         read_chat(chat_name, args.number)
-        exit(0)
+        return
    
     # See unread messages
     if args.last:
         get_latest_unread_messages()
-        exit(0)
+        return
     
     if args.send:
         if args.to is None:
@@ -79,7 +79,7 @@ def run(args):
         else:
             to = args.to
         send_message(to, args.send)
-        exit(0)
+        return
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="A CLI client for WhatsApp Web automation")
